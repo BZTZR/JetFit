@@ -30,6 +30,7 @@
 
 ## 🚀 Как запустить проект
 
-1. Клонируйте репозиторий:
+1. Клонируйте репозиторий в Android Studio:
    ```bash
-   git clone https://github.com/BZTZR/jetfit.git
+   https://github.com/BZTZR/JetFit.git
+2. Скомпилируйте проект через ADB или сформируйте .apk файл
