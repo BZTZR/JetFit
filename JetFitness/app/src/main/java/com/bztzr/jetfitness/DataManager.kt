@@ -29,7 +29,8 @@ class DataManager(private val context: Context) {
 
     val historyFlow: Flow<List<String>> = context.dataStore.data.map { prefs ->
         val h = prefs[HISTORY_LIST_KEY] ?: ""
-        if (h.isEmpty()) emptyList() else h.split("|").filter { it.isNotEmpty() }
+        if (h.isEmpty()) emptyList()
+        else h.split("|||").filter { it.isNotEmpty() }
     }
 
     val userWeightFlow: Flow<Float> = context.dataStore.data.map { it[USER_WEIGHT_KEY] ?: 70f }
@@ -43,19 +44,25 @@ class DataManager(private val context: Context) {
         val today = getCurrentDate()
         context.dataStore.edit { prefs ->
             val lastDate = prefs[LAST_DATE_KEY]
+
             if (lastDate != today) {
                 if (lastDate != null) {
                     val totalSteps = prefs[TOTAL_STEPS_KEY] ?: 0
+
                     if (totalSteps > 0) {
                         val dist = (totalSteps * 0.7) / 1000.0
                         val cals = (totalSteps * 0.04).toInt()
 
+                        val entry = String.format("%s: %d шагов, %.2f км, %d ккал", lastDate, totalSteps, dist, cals)
+
                         val oldHistory = prefs[HISTORY_LIST_KEY] ?: ""
-                        val entry = String.format("%s: %d шагов | %.2f км | %d ккал", lastDate, totalSteps, dist, cals)
-                        val newHistory = if (oldHistory.isEmpty()) entry else "$oldHistory|$entry"
+
+                        val newHistory = if (oldHistory.isEmpty()) entry else "$oldHistory|||$entry"
+
                         prefs[HISTORY_LIST_KEY] = newHistory
                     }
                 }
+
                 prefs[TOTAL_STEPS_KEY] = 0
                 prefs[TODAY_SESSIONS_KEY] = ""
                 prefs[LAST_DATE_KEY] = today
